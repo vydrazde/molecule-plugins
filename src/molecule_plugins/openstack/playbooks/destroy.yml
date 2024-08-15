@@ -21,12 +21,25 @@
         name: "{{ identity_file }}"
         state: absent
 
-    - name: Destroy openstack instance
+    - name: Launch destruction of openstack instances
       openstack.cloud.server:
         state: absent
         name: "molecule-test-{{ item.name }}-{{ uuid }}"
         delete_fip: true
       loop: "{{ molecule_yml.platforms }}"
+      async: 300
+      poll: 0
+      register: openstack_instances
+      changed_when: false
+
+    - name: Wait for OpenStack instances to be destroyed
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      loop: "{{ openstack_instances.results }}"
+      register: result
+      retries: 60
+      delay: 5
+      until: result.finished
 
     - name: Delete security groups
       openstack.cloud.security_group:
