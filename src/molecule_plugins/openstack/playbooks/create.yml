@@ -94,7 +94,7 @@
         mode: "0600"
       when: key_pair is changed # noqa no-handler
 
-    - name: Create openstack instance
+    - name: Launch creation of openstack instances
       openstack.cloud.server:
         state: present
         name: "molecule-test-{{ item.name }}-{{ uuid }}"
@@ -136,6 +136,19 @@
               else 'public'
             }}
       loop: "{{ molecule_yml.platforms }}"
+      async: 300
+      poll: 0
+      register: openstack_instances
+      changed_when: false
+
+    - name: Wait for OpenStack instances to be created
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      loop: "{{ openstack_instances.results }}"
+      register: result
+      retries: 60
+      delay: 5
+      until: result.finished
 
     - name: Create molecule instances configuration
       block:
