@@ -106,7 +106,7 @@
           }}
       openstack.cloud.server:
         state: present
-        name: "molecule-test-{{ item.name }}-{{ uuid }}"
+        name: "molecule-{{ item.name }}-{{ lookup('env', 'HOSTNAME') | default('unknown', true) }}-{{ uuid }}"
         description: "{{ item.description | default('Molecule test instance') }}"
         image: "{{ item.image }}"
         key_name: "{{ key_name }}"
@@ -162,7 +162,7 @@
 
         - name: Retrieve server information
           openstack.cloud.server_info:
-            server: "molecule-test-*-{{ uuid }}"
+            server: "molecule-*-{{ uuid }}"
           register: server_info
 
         - name: Include server_addr tasks

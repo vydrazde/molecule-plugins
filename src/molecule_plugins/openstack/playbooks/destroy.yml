@@ -24,7 +24,7 @@
     - name: Launch destruction of openstack instances
       openstack.cloud.server:
         state: absent
-        name: "molecule-test-{{ item.name }}-{{ uuid }}"
+        name: "molecule-{{ item.name }}-{{ lookup('env', 'HOSTNAME') | default('unknown', true) }}-{{ uuid }}"
         delete_fip: true
       loop: "{{ molecule_yml.platforms }}"
       async: 300
