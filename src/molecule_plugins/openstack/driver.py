@@ -70,6 +70,23 @@ class Openstack(Driver):
             network:
                 name: network1 # use network from instance-1
 
+    To attach an instance to more than one network, keep ``network`` as the
+    primary network (used for addressing the instance) and list any
+    additional, already existing networks under ``additional_networks``.
+
+    .. code-block:: yaml
+
+        driver:
+          name: openstack
+        platforms:
+          - name: instance-1
+            flavor: m1.small
+            image: Ubuntu_20.04
+            user: ubuntu
+            additional_networks:
+                - name: network2
+                - name: network3
+
     If specifying the security_group in your platform configuration, the security group is created.
     You can disable this behavior by specifying security_group.create = false.
     In this case the security group must exist.
