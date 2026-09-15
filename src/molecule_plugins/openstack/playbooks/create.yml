@@ -117,6 +117,7 @@
         boot_from_volume: "{{ true if item.volume is defined and item.volume.size else false }}"
         terminate_volume: "{{ true if item.volume is defined and item.volume.size else false }}"
         volume_size: "{{ item.volume.size if item.volume is defined and item.volume.size else omit }}"
+        config_drive: "{{ item.config_drive | default(omit) }}"
         network: "{{ omit if (item.additional_networks | default([]) | length > 0) else primary_network_name }}"
         nics: >-
           {{
